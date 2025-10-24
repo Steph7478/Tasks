@@ -2,6 +2,7 @@ using Tasks.Infrastructure.Context;
 using Tasks.Infrastructure.Config;
 using DotNetEnv;
 
+// env config
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "dev";
 
 Env.Load($".env.{environment}");
@@ -20,6 +21,8 @@ using (var context = new AppDbContext(options))
     context.Database.EnsureCreated();
 }
 
+
+// run server
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped(_ => new AppDbContext(options));
