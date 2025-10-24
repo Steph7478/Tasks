@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
-using Tasks.Security.Config.Permissions;
 
-namespace Tasks.Security.Filters
+namespace Tasks.Security.Config.Permissions
 {
     public class PermissionFilter : IAsyncActionFilter
     {

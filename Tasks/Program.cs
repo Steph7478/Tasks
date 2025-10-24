@@ -2,7 +2,7 @@ using Tasks.Infrastructure.Context;
 using Tasks.Infrastructure.Config;
 using Tasks.Security.Config.Cors;
 using Tasks.Security.Config.Headers;
-using Tasks.Security.Filters;
+using Tasks.Security.Config.Permissions;
 
 // env config
 var envConfig = new EnvConfig();
