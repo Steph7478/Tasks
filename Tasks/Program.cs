@@ -1,32 +1,19 @@
 using Tasks.Infrastructure.Context;
 using Tasks.Infrastructure.Config;
-using DotNetEnv;
 
-// env config
-var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "dev";
-
-Env.Load($".env.{environment}");
-
-var builderConfig = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddEnvironmentVariables();
-
-var config = builderConfig.Build();
-
-bool useInMemory = environment == "test";
-var options = DatabaseConfig.GetDbOptions(config, useInMemory);
+// env configs
+var envConfig = new EnvConfig();
+var options = envConfig.GetDbOptions();
 
 using (var context = new AppDbContext(options))
 {
     context.Database.EnsureCreated();
 }
 
-
 // run server
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped(_ => new AppDbContext(options));
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
