@@ -7,10 +7,12 @@ namespace Tasks.Domain.Services
     {
         public void ChangeStatus(DomainTask task, Status newStatus)
         {
-            if (task.CurrentStatus == Status.Completed)
-                throw new InvalidOperationException("Cannot change status after completion.");
-
             task.UpdateStatus(newStatus);
+        }
+
+        public void UpdateTask(DomainTask task, string? newTitle = null, string? newDescription = null)
+        {
+            task.Update(newTitle, newDescription);
         }
     }
 }

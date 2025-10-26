@@ -26,7 +26,22 @@ namespace Tasks.Domain.Entities
 
         public void UpdateStatus(Status newStatus)
         {
+            if (CurrentStatus == Status.Completed)
+                throw new InvalidOperationException("Cannot change status after completion.");
+
             CurrentStatus = newStatus;
+        }
+
+        public void Update(string? newTitle = null, string? newDescription = null)
+        {
+            if (CurrentStatus == Status.Completed)
+                throw new InvalidOperationException("Cannot update task after completion.");
+
+            if (!string.IsNullOrWhiteSpace(newTitle))
+                Title = newTitle;
+
+            if (!string.IsNullOrWhiteSpace(newDescription))
+                Description = newDescription;
         }
     }
 }
