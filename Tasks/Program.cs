@@ -1,54 +1,57 @@
 using Tasks.Infrastructure.Context;
 using Tasks.Infrastructure.Config;
+using Tasks.Infrastructure.Repositories;
+using Tasks.Application.Usecases;
+using Tasks.Domain.Repositories;
+using System.Text.Json;
 using Tasks.Security.Config.Cors;
 using Tasks.Security.Config.Headers;
 using Tasks.Security.Config.Permissions;
-using System.Text.Json;
-using Tasks.Domain.Repositories;
-using Tasks.Application.Usecases;
-using Tasks.Infrastructure.Repositories;
 
-// env config
+// Env configs
 var envConfig = new EnvConfig();
 var options = envConfig.GetDbOptions();
 
-// to close ORM session
+// Start DB + Auto Dispose();
 using (var context = new AppDbContext(options))
 {
     context.Database.EnsureCreated();
 }
 
-// server builder
+// Make builder
 var builder = WebApplication.CreateBuilder(args);
 
-// auth
-builder.Services.AddAuthorization();
+// Simple Authorizatin
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var routeRole in PermissionConfig.RouteRoles)
+    {
+        options.AddPolicy(routeRole.Key, policy =>
+        {
+            policy.RequireRole(routeRole.Value);
+        });
+    }
+});
 
-// controllers
+
+// Controllers
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<PermissionFilter>();
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
 })
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
-// scopes
+// DI
 builder.Services.AddScoped(_ => new AppDbContext(options));
-
-// repo scope
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-
-// usecases scope
 builder.Services.AddScoped<AddTask>();
 builder.Services.AddScoped<GetTaskById>();
 
-
-// what to run in base of what was configurated before
+// Build app
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -58,5 +61,4 @@ app.UseCorsPolicy();
 app.ApplySecurityHeaders();
 app.MapControllers();
 
-// start server
 app.Run();
