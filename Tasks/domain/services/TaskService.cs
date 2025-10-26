@@ -14,5 +14,10 @@ namespace Tasks.Domain.Services
         {
             task.Update(newTitle, newDescription);
         }
+
+        public void DeleteTask(DomainTask task)
+        {
+            Console.WriteLine($"Task '{task.Title}' will be deleted.");
+        }
     }
 }
