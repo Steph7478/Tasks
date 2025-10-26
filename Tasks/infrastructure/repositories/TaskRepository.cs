@@ -18,12 +18,16 @@ namespace Tasks.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(DomainTask task)
+        public async Task UpdateAsync(DomainTask domainTask)
         {
-            var entity = TaskMapper.ToEntity(task);
-            context.Tasks.Update(entity);
+            var entity = await context.Tasks.FindAsync(domainTask.Id) ?? throw new KeyNotFoundException("Task not found.");
+            entity.Title = domainTask.Title;
+            entity.Description = domainTask.Description;
+
             await context.SaveChangesAsync();
         }
+
+
 
         public async Task DeleteAsync(DomainTask task)
         {
@@ -35,8 +39,8 @@ namespace Tasks.Infrastructure.Repositories
         // Infra → Domain via Mapper
         public async Task<DomainTask?> GetByIdAsync(Guid id)
         {
-            var entity = await context.Tasks.FindAsync(id);
-            return entity == null ? null : TaskMapper.ToDomain(entity);
+            var entity = await context.Tasks.FindAsync(id) ?? throw new KeyNotFoundException("Task not found.");
+            return TaskMapper.ToDomain(entity);
         }
 
         public async Task<List<DomainTask>> GetAllAsync()
