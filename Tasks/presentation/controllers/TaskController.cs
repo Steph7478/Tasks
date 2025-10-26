@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tasks.Application.Usecases;
 using Tasks.Presentation.DTOs;
 using Tasks.Presentation.Mappers;
+using Tasks.Security.Config.Roles;
 
 namespace Tasks.Presentation.Controllers;
 
@@ -13,6 +15,8 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
     private readonly GetTaskById _getTaskByIdUseCase = getTaskByIdUseCase;
 
     [HttpPost("add")]
+    // [RolesAuthorize(nameof(TasksController), nameof(CreateTask))]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateTask([FromBody] TaskRequest request)
     {
 
@@ -24,6 +28,8 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
     }
 
     [HttpGet("{id:guid}")]
+    // [RolesAuthorize(nameof(TasksController), nameof(GetTaskById))]
+    [AllowAnonymous]
     public async Task<IActionResult> GetTaskById(Guid id)
     {
         var appResponse = await _getTaskByIdUseCase.ExecuteAsync(id);
