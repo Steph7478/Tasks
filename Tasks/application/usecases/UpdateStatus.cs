@@ -17,8 +17,6 @@ namespace Tasks.Application.Usecases
 
             _taskDomainService.ChangeStatus(task, request.CurrentStatus);
 
-            _taskDomainService.UpdateTask(task, request.Title, request.Description);
-
             await _taskRepository.UpdateAsync(task);
 
             return TaskMapper.ToDTO(task);
