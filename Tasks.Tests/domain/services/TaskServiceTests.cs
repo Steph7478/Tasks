@@ -32,5 +32,28 @@ namespace Tasks.Tests.Domain.Services
 
             Assert.Equal("Cannot change status after completion.", exception.Message);
         }
+
+        [Fact]
+        public void UpdateTask_Should_Update_Title_Or_Description()
+        {
+            var task = new DomainTask("Title Test", "Description Test");
+            var service = new TaskDomainService();
+
+            service.UpdateTask(task, "Title Working", "Description Working");
+
+            Assert.Equal("Title Working", task.Title);
+            Assert.Equal("Description Working", task.Description);
+        }
+
+        [Fact]
+        public void DeleteTask_Should_Run_Without_Exception()
+        {
+            var task = new DomainTask("Title Test", "Description Test");
+            var service = new TaskDomainService();
+
+            var exception = Record.Exception(() => service.DeleteTask(task));
+
+            Assert.Null(exception);
+        }
     }
 }
