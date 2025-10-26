@@ -235,4 +235,6 @@ _Pvt_Extensions
 .env*
 
 # db
-tasks.dev.db
+tasks.dev.db*
+
+.vscode
