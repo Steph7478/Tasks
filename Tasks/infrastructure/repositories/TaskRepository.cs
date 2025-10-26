@@ -6,7 +6,7 @@ using Tasks.Infrastructure.Context;
 
 namespace Tasks.Infrastructure.Repositories
 {
-    public class TaskRepositoryAdapter(AppDbContext context) : ITaskRepository
+    public class TaskRepository(AppDbContext context) : ITaskRepository
     {
         private readonly AppDbContext context = context;
 
