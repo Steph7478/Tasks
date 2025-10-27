@@ -1,57 +1,68 @@
 using Tasks.Domain.Repositories;
-using Tasks.Infrastructure.Mappers;
 using DomainTask = Tasks.Domain.Entities.Task;
-using Microsoft.EntityFrameworkCore;
 using Tasks.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
+using Tasks.Infrastructure.Mappers;
 
 namespace Tasks.Infrastructure.Repositories
 {
     public class TaskRepository(AppDbContext context) : ITaskRepository
     {
-        private readonly AppDbContext context = context;
+        private readonly AppDbContext _context = context;
 
-        // Domain → Infra via Mapper
+        // Add
         public async Task AddAsync(DomainTask task)
         {
             var entity = TaskMapper.ToEntity(task);
-            context.Tasks.Add(entity);
-            await context.SaveChangesAsync();
+            _context.Tasks.Add(entity);
+            await _context.SaveChangesAsync();
+
+            typeof(DomainTask).GetProperty("Id")!.SetValue(task, entity.Id);
         }
 
-        public async Task UpdateAsync(DomainTask domainTask)
+        // Update
+        public async Task UpdateAsync(DomainTask task)
         {
-            var entity = await context.Tasks.FindAsync(domainTask.Id) ?? throw new KeyNotFoundException("Task not found.");
-            entity.Title = domainTask.Title;
-            entity.Description = domainTask.Description;
+            var entity = TaskMapper.GetTrackedEntity(task);
 
-            await context.SaveChangesAsync();
+            entity.Title = task.Title;
+            entity.Description = task.Description;
+            entity.CurrentStatus = task.CurrentStatus;
+
+            await _context.SaveChangesAsync();
         }
 
-
-
+        // Delete
         public async Task DeleteAsync(DomainTask task)
         {
-            var entity = TaskMapper.ToEntity(task);
-            context.Tasks.Remove(entity);
-            await context.SaveChangesAsync();
+            var entity = TaskMapper.GetTrackedEntity(task)
+                         ?? throw new KeyNotFoundException("Task not found");
+
+            _context.Tasks.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        // Infra → Domain via Mapper
+
+        // GetById
         public async Task<DomainTask?> GetByIdAsync(Guid id)
         {
-            var entity = await context.Tasks.FindAsync(id) ?? throw new KeyNotFoundException("Task not found.");
-            return TaskMapper.ToDomain(entity);
+            var entity = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id)
+                         ?? throw new KeyNotFoundException("Task not found");
+
+            return TaskMapper.ToDomainTracked(entity);
         }
 
+        // GetAll
         public async Task<List<DomainTask>> GetAllAsync()
         {
-            var entities = await context.Tasks.ToListAsync();
-            return [.. entities.Select(TaskMapper.ToDomain)];
+            var entities = await _context.Tasks.ToListAsync();
+            return [.. entities.Select(TaskMapper.ToDomainTracked)];
         }
 
+        // ExistsByTitle
         public async Task<bool> ExistsByTitleAsync(string title)
         {
-            return await context.Tasks.AnyAsync(t => t.Title == title);
+            return await _context.Tasks.AnyAsync(t => t.Title == title);
         }
     }
 }

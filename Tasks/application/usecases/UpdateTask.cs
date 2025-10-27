@@ -3,22 +3,24 @@ using Tasks.Domain.Services;
 using Tasks.Application.DTOs;
 using Tasks.Application.Mappers;
 
-namespace Tasks.Application.Usecases;
-
-public class UpdateTaskUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
+namespace Tasks.Application.Usecases
 {
-    private readonly ITaskRepository _taskRepository = taskRepository;
-    private readonly TaskDomainService _taskDomainService = taskDomainService;
-
-    public async Task<TaskResponseDTO> ExecuteAsync(Guid id, TaskRequestDTO request)
+    public class UpdateTaskUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
     {
-        var task = await _taskRepository.GetByIdAsync(id)
-            ?? throw new KeyNotFoundException("Task not found.");
+        private readonly ITaskRepository _taskRepository = taskRepository;
+        private readonly TaskDomainService _taskDomainService = taskDomainService;
 
-        _taskDomainService.UpdateTask(task, request.Title, request.Description);
+        public async Task<TaskResponseDTO> ExecuteAsync(Guid id, TaskRequestDTO request)
+        {
+            var task = await _taskRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Task not found");
 
-        await _taskRepository.UpdateAsync(task);
+            _taskDomainService.UpdateTask(task, request.Title, request.Description);
 
-        return TaskMapper.ToDTO(task);
+            await _taskRepository.UpdateAsync(task);
+
+            return TaskMapper.ToDTO(task);
+        }
     }
+
 }
