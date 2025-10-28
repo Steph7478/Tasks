@@ -12,8 +12,7 @@ namespace Tasks.Application.Usecases
 
         public async Task<TaskResponseDTO> ExecuteAsync(Guid id, TaskRequestDTO request)
         {
-            var task = await _taskRepository.GetByIdAsync(id)
-                       ?? throw new KeyNotFoundException("Task not found");
+            var task = await _taskRepository.GetByIdAsync(id);
 
             _taskDomainService.UpdateTask(task, request.Title, request.Description);
 
