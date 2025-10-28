@@ -9,14 +9,26 @@ namespace Tasks.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseCase, UpdateTaskUseCase updateTaskUseCase) : ControllerBase
+public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseCase, UpdateTaskUseCase updateTaskUseCase, UpdateStatusUseCase completeTask, DeleteTaskUseCase deleteTaskUseCase) : ControllerBase
 {
     private readonly AddTask _addTaskUseCase = addTaskUseCase;
     private readonly GetTaskById _getTaskByIdUseCase = getTaskByIdUseCase;
     private readonly UpdateTaskUseCase _updateTaskUseCase = updateTaskUseCase;
+    private readonly UpdateStatusUseCase _completeTask = completeTask;
+    private readonly DeleteTaskUseCase _deleteTask = deleteTaskUseCase;
+
+    [HttpGet("{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetTaskById(Guid id)
+    {
+        TaskResponseDTO appResponse = await _getTaskByIdUseCase.ExecuteAsync(id);
+        if (appResponse == null) return NotFound();
+        TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
+
+        return Ok(response);
+    }
 
     [HttpPost("add")]
-    // [RolesAuthorize(nameof(TasksController), nameof(CreateTask))]
     [AllowAnonymous]
     public async Task<IActionResult> CreateTask([FromBody] TaskRequest request)
     {
@@ -27,28 +39,42 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
         return Ok(response);
     }
 
-    [HttpPut("update")]
-    // [RolesAuthorize(nameof(TasksController), nameof(UpdateTask))]
+    [HttpPut("{id:guid}/update")]
     [AllowAnonymous]
     public async Task<IActionResult> UpdateTask(Guid id, [FromBody] TaskRequest request)
     {
         TaskRequestDTO appRequest = TaskPresentationMapper.ToApplication(request);
         TaskResponseDTO appResponse = await _updateTaskUseCase.ExecuteAsync(id, appRequest);
 
-        var response = TaskPresentationMapper.ToApi(appResponse);
-
-        return Ok(response);
-    }
-
-    [HttpGet("{id:guid}")]
-    // [RolesAuthorize(nameof(TasksController), nameof(GetTaskById))]
-    [AllowAnonymous]
-    public async Task<IActionResult> GetTaskById(Guid id)
-    {
-        TaskResponseDTO appResponse = await _getTaskByIdUseCase.ExecuteAsync(id);
-        if (appResponse == null) return NotFound();
         TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
 
         return Ok(response);
     }
+
+    [HttpPut("{id:guid}/status")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UpdateTaskStatus(Guid id, [FromBody] UpdateStatusRequest request)
+    {
+        TaskResponseDTO appResponse = await _completeTask.ExecuteAsync(id, request.CurrentStatus);
+
+        TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
+        return Ok(response);
+    }
+
+    [HttpDelete("{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> DeleteTask(Guid id)
+    {
+        bool deleted = await _deleteTask.ExecuteAsync(id);
+
+        if (!deleted)
+            return NotFound();
+
+        return NoContent();
+    }
+
 }
+
+// for flexibility public async Task<IActionResult> GetTaskById([FromRoute(Name = "id")] + Guid id = idFromRoute ?? idFromQuery ?? throw new ArgumentException("ID not found");
+
+// for future auth [RolesAuthorize(nameof(TasksController), nameof(Action))]
