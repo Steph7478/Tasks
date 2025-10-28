@@ -9,10 +9,15 @@ public class DeleteTaskUseCase(ITaskRepository taskRepository, TaskDomainService
     private readonly ITaskRepository _taskRepository = taskRepository;
     private readonly TaskDomainService _taskDomainService = taskDomainService;
 
-    public async Task ExecuteAsync(DomainTask task)
+    public async Task<bool> ExecuteAsync(Guid id)
     {
-        DomainTask entity = await _taskRepository.GetByIdAsync(task.Id);
-        _taskDomainService.ValidateDelete(entity);
-        await _taskRepository.DeleteAsync(entity);
+        DomainTask task = await _taskRepository.GetByIdAsync(id);
+        if (task == null) return false;
+
+        _taskDomainService.ValidateDelete(task);
+        await _taskRepository.DeleteAsync(task);
+
+        return true;
     }
 }
+
