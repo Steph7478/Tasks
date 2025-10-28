@@ -59,7 +59,7 @@ namespace Tasks.Infrastructure.Repositories
         public async Task<List<DomainTask>> GetAllAsync()
         {
             var entities = await _context.Tasks.ToListAsync();
-            return entities.Select(TaskMapper.ToDomain).ToList();
+            return [.. entities.Select(TaskMapper.ToDomain)];
         }
 
         // ExistsByTitle
