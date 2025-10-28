@@ -11,7 +11,8 @@ public class DeleteTaskUseCase(ITaskRepository taskRepository, TaskDomainService
 
     public async Task ExecuteAsync(DomainTask task)
     {
-        _taskDomainService.ValidateDelete(task);
-        await _taskRepository.DeleteAsync(task);
+        var entity = await _taskRepository.GetByIdAsync(task.Id);
+        _taskDomainService.ValidateDelete(entity);
+        await _taskRepository.DeleteAsync(entity);
     }
 }
