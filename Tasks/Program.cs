@@ -52,6 +52,7 @@ builder.Services.AddScoped(_ => new AppDbContext(options));
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<TaskDomainService>();
 builder.Services.AddScoped<GetTaskById>();
+builder.Services.AddScoped<GetAllTasksUseCase>();
 builder.Services.AddScoped<AddTask>();
 builder.Services.AddScoped<UpdateTaskUseCase>();
 builder.Services.AddScoped<UpdateStatusUseCase>();
