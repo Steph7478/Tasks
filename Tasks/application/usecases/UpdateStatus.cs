@@ -3,6 +3,8 @@ using Tasks.Application.Mappers;
 using Tasks.Domain.Enums;
 using Tasks.Domain.Repositories;
 using Tasks.Domain.Services;
+using DomainTask = Tasks.Domain.Entities.Task;
+
 
 namespace Tasks.Application.Usecases;
 
@@ -13,7 +15,7 @@ public class UpdateStatusUseCase(ITaskRepository taskRepository, TaskDomainServi
 
     public async Task<TaskResponseDTO> ExecuteAsync(Guid id, Status newStatus)
     {
-        var entity = await _taskRepository.GetByIdAsync(id);
+        DomainTask entity = await _taskRepository.GetByIdAsync(id);
 
         _taskDomainService.ChangeStatus(entity, newStatus);
 

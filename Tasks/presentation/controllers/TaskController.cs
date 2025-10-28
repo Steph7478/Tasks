@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tasks.Application.DTOs;
 using Tasks.Application.Usecases;
 using Tasks.Presentation.DTOs;
 using Tasks.Presentation.Mappers;
@@ -19,9 +20,9 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
     [AllowAnonymous]
     public async Task<IActionResult> CreateTask([FromBody] TaskRequest request)
     {
-        var appRequest = TaskPresentationMapper.ToApplication(request);
-        var appResponse = await _addTaskUseCase.ExecuteAsync(appRequest);
-        var response = TaskPresentationMapper.ToApi(appResponse);
+        TaskRequestDTO appRequest = TaskPresentationMapper.ToApplication(request);
+        TaskResponseDTO appResponse = await _addTaskUseCase.ExecuteAsync(appRequest);
+        TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
 
         return Ok(response);
     }
@@ -31,8 +32,8 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
     [AllowAnonymous]
     public async Task<IActionResult> UpdateTask(Guid id, [FromBody] TaskRequest request)
     {
-        var appRequest = TaskPresentationMapper.ToApplication(request);
-        var appResponse = await _updateTaskUseCase.ExecuteAsync(id, appRequest);
+        TaskRequestDTO appRequest = TaskPresentationMapper.ToApplication(request);
+        TaskResponseDTO appResponse = await _updateTaskUseCase.ExecuteAsync(id, appRequest);
 
         var response = TaskPresentationMapper.ToApi(appResponse);
 
@@ -44,9 +45,9 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
     [AllowAnonymous]
     public async Task<IActionResult> GetTaskById(Guid id)
     {
-        var appResponse = await _getTaskByIdUseCase.ExecuteAsync(id);
+        TaskResponseDTO appResponse = await _getTaskByIdUseCase.ExecuteAsync(id);
         if (appResponse == null) return NotFound();
-        var response = TaskPresentationMapper.ToApi(appResponse);
+        TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
 
         return Ok(response);
     }

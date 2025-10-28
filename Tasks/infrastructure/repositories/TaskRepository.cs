@@ -3,6 +3,7 @@ using DomainTask = Tasks.Domain.Entities.Task;
 using Tasks.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Tasks.Infrastructure.Mappers;
+using Tasks.Infrastructure.Entities;
 
 namespace Tasks.Infrastructure.Repositories
 {
@@ -13,7 +14,7 @@ namespace Tasks.Infrastructure.Repositories
         // Add
         public async Task AddAsync(DomainTask task)
         {
-            var entity = TaskMapper.ToEntity(task);
+            TaskEntity entity = TaskMapper.ToEntity(task);
             _context.Tasks.Add(entity);
             await _context.SaveChangesAsync();
 
@@ -23,8 +24,7 @@ namespace Tasks.Infrastructure.Repositories
         // Update
         public async Task UpdateAsync(DomainTask domain)
         {
-            var entity = _context.Tasks.Local.FirstOrDefault(t => t.Id == domain.Id)
-                         ?? await _context.Tasks.FirstOrDefaultAsync(t => t.Id == domain.Id)
+            TaskEntity entity = await _context.Tasks.FindAsync(domain.Id)
                          ?? throw new KeyNotFoundException("Task not found");
 
             entity.Title = domain.Title;
@@ -37,8 +37,7 @@ namespace Tasks.Infrastructure.Repositories
         // Delete
         public async Task DeleteAsync(DomainTask domain)
         {
-            var entity = _context.Tasks.Local.FirstOrDefault(t => t.Id == domain.Id)
-                         ?? await _context.Tasks.FirstOrDefaultAsync(t => t.Id == domain.Id)
+            TaskEntity entity = await _context.Tasks.FindAsync(domain.Id)
                          ?? throw new KeyNotFoundException("Task not found");
 
             _context.Tasks.Remove(entity);
@@ -48,8 +47,7 @@ namespace Tasks.Infrastructure.Repositories
         // GetById
         public async Task<DomainTask> GetByIdAsync(Guid id)
         {
-            var entity = _context.Tasks.Local.FirstOrDefault(t => t.Id == id)
-                         ?? await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id)
+            TaskEntity entity = await _context.Tasks.FindAsync(id)
                          ?? throw new KeyNotFoundException("Task not found");
 
             return TaskMapper.ToDomain(entity);
@@ -58,7 +56,7 @@ namespace Tasks.Infrastructure.Repositories
         // GetAll
         public async Task<List<DomainTask>> GetAllAsync()
         {
-            var entities = await _context.Tasks.ToListAsync();
+            List<TaskEntity> entities = await _context.Tasks.ToListAsync();
             return [.. entities.Select(TaskMapper.ToDomain)];
         }
 

@@ -1,6 +1,7 @@
 using Tasks.Domain.Repositories;
 using Tasks.Application.DTOs;
 using Tasks.Application.Mappers;
+using DomainTask = Tasks.Domain.Entities.Task;
 
 namespace Tasks.Application.Usecases;
 
@@ -10,7 +11,7 @@ public class GetTaskById(ITaskRepository taskRepository)
 
     public async Task<TaskResponseDTO> ExecuteAsync(Guid id)
     {
-        var task = await _taskRepository.GetByIdAsync(id);
+        DomainTask task = await _taskRepository.GetByIdAsync(id);
 
         return TaskMapper.ToDTO(task);
     }

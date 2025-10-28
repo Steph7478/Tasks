@@ -8,7 +8,7 @@ namespace Tasks.Infrastructure.Mappers
         // Entity -> Domain
         public static DomainTask ToDomain(TaskEntity entity)
         {
-            var domain = new DomainTask(entity.Title, entity.Description);
+            DomainTask domain = new(entity.Title, entity.Description);
             typeof(DomainTask).GetProperty("Id")!.SetValue(domain, entity.Id);
             typeof(DomainTask).GetProperty("CreatedAt")!.SetValue(domain, entity.CreatedAt);
             typeof(DomainTask).GetProperty("CurrentStatus")!.SetValue(domain, entity.CurrentStatus);
