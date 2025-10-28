@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Tasks.Tests.Application.Usecases
 {
-    public class TaskApplicationUsecasesTests
+    public class AddTaskTest
     {
         [Fact]
         public async Task AddTask_Should_Create_A_Task()
