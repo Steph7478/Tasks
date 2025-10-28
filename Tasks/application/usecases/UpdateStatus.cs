@@ -3,27 +3,22 @@ using Tasks.Application.Mappers;
 using Tasks.Domain.Enums;
 using Tasks.Domain.Repositories;
 using Tasks.Domain.Services;
-using DomainTask = Tasks.Domain.Entities.Task;
 
 namespace Tasks.Application.Usecases;
 
-public class UpdateStatusUseCase
+public class UpdateStatusUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
 {
-    private readonly ITaskRepository _taskRepository;
-    private readonly TaskDomainService _taskDomainService;
+    private readonly ITaskRepository _taskRepository = taskRepository;
+    private readonly TaskDomainService _taskDomainService = taskDomainService;
 
-    public UpdateStatusUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
+    public async Task<TaskResponseDTO> ExecuteAsync(Guid id, Status newStatus)
     {
-        _taskRepository = taskRepository;
-        _taskDomainService = taskDomainService;
-    }
+        var entity = await _taskRepository.GetByIdAsync(id);
 
-    public async Task<TaskResponseDTO> ExecuteAsync(DomainTask task, Status newStatus)
-    {
-        _taskDomainService.ChangeStatus(task, newStatus);
+        _taskDomainService.ChangeStatus(entity, newStatus);
 
-        await _taskRepository.UpdateAsync(task);
+        await _taskRepository.UpdateAsync(entity);
 
-        return TaskMapper.ToDTO(task);
+        return TaskMapper.ToDTO(entity);
     }
 }
