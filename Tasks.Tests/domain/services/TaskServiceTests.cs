@@ -51,7 +51,7 @@ namespace Tasks.Tests.Domain.Services
             var task = new DomainTask("Title Test", "Description Test");
             var service = new TaskDomainService();
 
-            var exception = Record.Exception(() => service.DeleteTask(task));
+            var exception = Record.Exception(() => service.ValidateDelete(task));
 
             Assert.Null(exception);
         }
