@@ -9,10 +9,11 @@ namespace Tasks.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseCase, UpdateTaskUseCase updateTaskUseCase, UpdateStatusUseCase completeTask, DeleteTaskUseCase deleteTaskUseCase) : ControllerBase
+public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseCase, UpdateTaskUseCase updateTaskUseCase, UpdateStatusUseCase completeTask, DeleteTaskUseCase deleteTaskUseCase, GetAllTasksUseCase getAllTasksUseCase) : ControllerBase
 {
     private readonly AddTask _addTaskUseCase = addTaskUseCase;
     private readonly GetTaskById _getTaskByIdUseCase = getTaskByIdUseCase;
+    private readonly GetAllTasksUseCase _getAllTasksUseCase = getAllTasksUseCase;
     private readonly UpdateTaskUseCase _updateTaskUseCase = updateTaskUseCase;
     private readonly UpdateStatusUseCase _completeTask = completeTask;
     private readonly DeleteTaskUseCase _deleteTask = deleteTaskUseCase;
@@ -26,6 +27,17 @@ public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseC
         TaskResponse response = TaskPresentationMapper.ToApi(appResponse);
 
         return Ok(response);
+    }
+
+    [HttpGet("all")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAllTasks()
+    {
+        IEnumerable<TaskResponseDTO> appResponses = await _getAllTasksUseCase.ExecuteAsync();
+        IEnumerable<TaskResponse> responses = appResponses
+            .Select(TaskPresentationMapper.ToApi);
+
+        return Ok(responses);
     }
 
     [HttpPost("add")]
