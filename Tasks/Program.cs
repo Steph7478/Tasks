@@ -25,11 +25,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    foreach (var routeRole in PermissionConfig.RouteRoles)
+    foreach (var (routeKey, rule) in PermissionConfig.RoutePermissions)
     {
-        options.AddPolicy(routeRole.Key, policy =>
+        options.AddPolicy(routeKey, policy =>
         {
-            policy.RequireRole(routeRole.Value);
+            policy.RequireRole(rule.Roles);
         });
     }
 });

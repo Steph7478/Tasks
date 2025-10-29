@@ -1,24 +1,21 @@
 using Microsoft.AspNetCore.Authorization;
 using Tasks.Security.Config.Permissions;
 
-namespace Tasks.Security.Config.Roles
+namespace Tasks.Security.Config.Roles;
+
+[AttributeUsage(AttributeTargets.Method)]
+public class RolesAuthorizeAttribute : AuthorizeAttribute
 {
-    [AttributeUsage(AttributeTargets.Method)]
-
-    public class RolesAuthorizeAttribute : AuthorizeAttribute
+    public RolesAuthorizeAttribute(string controllerName, string actionName, string httpMethod)
     {
-        public RolesAuthorizeAttribute(string controllerName, string actionName)
+        if (PermissionConfig.RoutePermissions.TryGetValue($"{controllerName}.{actionName}", out var rule)
+            && rule.Methods.Contains(httpMethod, StringComparer.OrdinalIgnoreCase))
         {
-            if (PermissionConfig.RouteRoles.TryGetValue($"{controllerName}.{actionName}", out var roles) && roles.Length > 0)
-            {
-                Roles = string.Join(",", roles);
-            }
-            else
-            {
-                Roles = "NO_ACCESS";
-            }
+            Roles = string.Join(",", rule.Roles);
         }
-
-
+        else
+        {
+            Roles = "NO_ACCESS";
+        }
     }
 }
