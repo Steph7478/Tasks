@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tasks.Application.DTOs;
-using Tasks.Application.Usecases;
+using Tasks.Application.Repositories;
 using Tasks.Presentation.DTOs;
 using Tasks.Presentation.Mappers;
 
@@ -9,14 +9,14 @@ namespace Tasks.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController(AddTask addTaskUseCase, GetTaskById getTaskByIdUseCase, UpdateTaskUseCase updateTaskUseCase, UpdateStatusUseCase completeTask, DeleteTaskUseCase deleteTaskUseCase, GetAllTasksUseCase getAllTasksUseCase) : ControllerBase
+public class TasksController(IAddTask addTaskUseCase, IGetTaskById getTaskByIdUseCase, IUpdateTask updateTaskUseCase, IUpdateStatus completeTask, IDeleteTask deleteTaskUseCase, IGetAllTasks getAllTasksUseCase) : ControllerBase
 {
-    private readonly AddTask _addTaskUseCase = addTaskUseCase;
-    private readonly GetTaskById _getTaskByIdUseCase = getTaskByIdUseCase;
-    private readonly GetAllTasksUseCase _getAllTasksUseCase = getAllTasksUseCase;
-    private readonly UpdateTaskUseCase _updateTaskUseCase = updateTaskUseCase;
-    private readonly UpdateStatusUseCase _completeTask = completeTask;
-    private readonly DeleteTaskUseCase _deleteTask = deleteTaskUseCase;
+    private readonly IAddTask _addTaskUseCase = addTaskUseCase;
+    private readonly IGetTaskById _getTaskByIdUseCase = getTaskByIdUseCase;
+    private readonly IGetAllTasks _getAllTasksUseCase = getAllTasksUseCase;
+    private readonly IUpdateTask _updateTaskUseCase = updateTaskUseCase;
+    private readonly IUpdateStatus _completeTask = completeTask;
+    private readonly IDeleteTask _deleteTask = deleteTaskUseCase;
 
     [HttpGet("{id:guid}")]
     [AllowAnonymous]

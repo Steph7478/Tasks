@@ -3,10 +3,11 @@ using Tasks.Domain.Services;
 using Tasks.Application.DTOs;
 using Tasks.Application.Mappers;
 using DomainTask = Tasks.Domain.Entities.Task;
+using Tasks.Application.Repositories;
 
 namespace Tasks.Application.Usecases
 {
-    public class UpdateTaskUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
+    public class UpdateTaskUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService) : IUpdateTask
     {
         private readonly ITaskRepository _taskRepository = taskRepository;
         private readonly TaskDomainService _taskDomainService = taskDomainService;

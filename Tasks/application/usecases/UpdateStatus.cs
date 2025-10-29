@@ -1,4 +1,5 @@
 using Tasks.Application.DTOs;
+using Tasks.Application.Repositories;
 using Tasks.Application.Mappers;
 using Tasks.Domain.Enums;
 using Tasks.Domain.Repositories;
@@ -8,7 +9,7 @@ using DomainTask = Tasks.Domain.Entities.Task;
 
 namespace Tasks.Application.Usecases;
 
-public class UpdateStatusUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService)
+public class UpdateStatusUseCase(ITaskRepository taskRepository, TaskDomainService taskDomainService) : IUpdateStatus
 {
     private readonly ITaskRepository _taskRepository = taskRepository;
     private readonly TaskDomainService _taskDomainService = taskDomainService;

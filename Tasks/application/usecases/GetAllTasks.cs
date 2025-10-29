@@ -1,11 +1,12 @@
 using Tasks.Application.DTOs;
+using Tasks.Application.Repositories;
 using Tasks.Application.Mappers;
 using Tasks.Domain.Repositories;
 using DomainTask = Tasks.Domain.Entities.Task;
 
 namespace Tasks.Application.Usecases
 {
-    public class GetAllTasksUseCase(ITaskRepository taskRepository)
+    public class GetAllTasksUseCase(ITaskRepository taskRepository) : IGetAllTasks
     {
         private readonly ITaskRepository _taskRepository = taskRepository;
 
