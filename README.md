@@ -64,14 +64,14 @@ Access the API endpoints:
 
 ## 🔗 API Endpoints  
 
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| **POST** | `/api/tasks` | Create a new task |
-| **GET** | `/api/tasks/all` | Get all tasks |
-| **GET** | `/api/tasks/{id}` | Get a task by ID |
-| **PUT** | `/api/tasks/{id}` | Update a task |
-| **PATCH** | `/api/tasks/{id}/status` | Update task status |
-| **DELETE** | `/api/tasks/{id}` | Delete a task |
+| Method     | Endpoint                 | Description        |
+| ---------- | ------------------------ | ------------------ |
+| **POST**   | `/api/tasks/add`         | Create a new task  |
+| **GET**    | `/api/tasks/all`         | Get all tasks      |
+| **GET**    | `/api/tasks/{id}`        | Get a task by ID   |
+| **PUT**    | `/api/tasks/{id}/update` | Update a task      |
+| **PUT**    | `/api/tasks/{id}/status` | Update task status |
+| **DELETE** | `/api/tasks/{id}`        | Delete a task      |
 
 Example usage with `curl`:
 ```bash
