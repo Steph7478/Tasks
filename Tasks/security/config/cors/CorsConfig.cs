@@ -22,7 +22,7 @@ public static class CorsConfig
                     .ToArray();
 
                 builder
-                    .WithOrigins(origins.ToArray())
+                    .WithOrigins([.. origins])
                     .WithMethods(allowedMethods)
                     .AllowAnyHeader()
                     .AllowCredentials();
